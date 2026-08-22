@@ -1,2 +1,3 @@
 # fm-demo
-fm-port full-chain demo
+
+Scratch repo for the fm-port full-chain test.
