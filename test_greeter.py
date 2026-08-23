@@ -52,5 +52,20 @@ class TestGreetAll(unittest.TestCase):
     def test_greet_all_empty_list(self):
         self.assertEqual(greet_all([]), [])
 
+    def test_greet_all_rejects_int_entry(self):
+        with self.assertRaises(ValueError) as ctx:
+            greet_all(["captain", 42])
+        self.assertIn("str", str(ctx.exception).lower())
+
+    def test_greet_all_rejects_none_entry(self):
+        with self.assertRaises(ValueError) as ctx:
+            greet_all(["captain", None])
+        self.assertIn("str", str(ctx.exception).lower())
+
+    def test_greet_all_rejects_bytes_entry(self):
+        with self.assertRaises(ValueError) as ctx:
+            greet_all(["captain", b"crew"])
+        self.assertIn("str", str(ctx.exception).lower())
+
 if __name__ == "__main__":
     unittest.main()
