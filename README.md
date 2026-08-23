@@ -4,22 +4,22 @@ Scratch repo for the fm-port full-chain test.
 
 ## Usage
 
-`greet(username)` returns a greeting string:
+`greet(username, language="en")` returns a greeting string. Non-English
+copy lives in one file per locale under `lang/` (for example
+`lang/es.json`, `lang/fr.json`). Each file holds both `greet` and
+`farewell`. English and unknown codes fall back to the hardcoded English
+word:
 
 ```python
 from greetings import greet
 
 print(greet("Alice"))
 # hello Alice
+print(greet("Alice", "es"))
+# hola Alice
 ```
 
-`farewell(name, language="en")` returns a farewell string. Non-English
-languages are loaded from `greetings_lang.json` once and cached in memory;
-English and unknown codes fall back to `goodbye`:
-
-When `greetings_lang.json` grows beyond roughly ten language entries, split
-it into one file per locale under `lang/` (for example `lang/es.json`,
-`lang/fr.json`) instead of expanding the monolith file.
+`farewell(name, language="en")` uses the same catalog and fallback:
 
 ```python
 from greetings import farewell
@@ -29,6 +29,9 @@ print(farewell("Alice"))
 print(farewell("Alice", "es"))
 # adios Alice
 ```
+
+`greet_all(names, language="en")` greets each name in the same language.
+The CLI `--lang` flag on `greet`, `farewell`, and `greet-all` does the same.
 
 ### Smoke block
 
