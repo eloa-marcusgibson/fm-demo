@@ -2,6 +2,7 @@ import argparse
 import json
 import sys
 
+from .catalog import language_codes
 from .farewell import farewell
 from .greet import greet
 from .greet_all import greet_all
@@ -27,6 +28,7 @@ def main(argv=None):
     greet_all_parser = sub.add_parser("greet-all")
     greet_all_parser.add_argument("names", nargs="+")
     greet_all_parser.add_argument("--lang")
+    sub.add_parser("langs")
     args = parser.parse_args(argv)
     if args.command == "greet":
         if args.lang is None:
@@ -47,6 +49,10 @@ def main(argv=None):
             print(json.dumps({"message": line}))
         else:
             print(line)
+        return 0
+    if args.command == "langs":
+        for code in language_codes():
+            print(code)
         return 0
     if args.command == "greet-all":
         if args.lang is None:

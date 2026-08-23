@@ -24,6 +24,11 @@ class TestGreetCommand(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip().splitlines(), ["hola Alice"])
 
+    def test_greet_lang_de_prints_translated_line(self):
+        result = run_cli("greet", "Ada", "--lang", "de")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip().splitlines(), ["hallo Ada"])
+
     def test_greet_missing_username_exits_nonzero(self):
         result = run_cli("greet")
         self.assertNotEqual(result.returncode, 0)
@@ -46,6 +51,11 @@ class TestFarewellCommand(unittest.TestCase):
         result = run_cli("farewell", "crew", "--lang", "es")
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip().splitlines(), ["adios crew"])
+
+    def test_farewell_lang_de_prints_translated_line(self):
+        result = run_cli("farewell", "Ada", "--lang", "de")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip().splitlines(), ["tschüss Ada"])
 
     def test_farewell_missing_name_exits_nonzero(self):
         result = run_cli("farewell")
@@ -86,6 +96,13 @@ class TestGreetAllCommand(unittest.TestCase):
         payload = json.loads(result.stdout)
         self.assertIsInstance(payload, list)
         self.assertEqual(payload, ["hello captain", "hello crew"])
+
+
+class TestLangsCommand(unittest.TestCase):
+    def test_langs_prints_known_codes_sorted(self):
+        result = run_cli("langs")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip().splitlines(), ["de", "en", "es", "fr"])
 
 
 class TestUnknownAndSmoke(unittest.TestCase):
