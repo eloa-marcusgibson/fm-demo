@@ -18,6 +18,11 @@ class TestGreetCommand(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip().splitlines(), ["hello Alice"])
 
+    def test_greet_lang_prints_translated_line(self):
+        result = run_cli("greet", "Alice", "--lang", "es")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip().splitlines(), ["hola Alice"])
+
     def test_greet_missing_username_exits_nonzero(self):
         result = run_cli("greet")
         self.assertNotEqual(result.returncode, 0)
@@ -46,6 +51,14 @@ class TestGreetAllCommand(unittest.TestCase):
         self.assertEqual(
             result.stdout.strip().splitlines(),
             ["hello captain", "hello crew"],
+        )
+
+    def test_greet_all_lang_prints_translated_lines(self):
+        result = run_cli("greet-all", "captain", "crew", "--lang", "es")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(
+            result.stdout.strip().splitlines(),
+            ["hola captain", "hola crew"],
         )
 
     def test_greet_all_missing_names_exits_nonzero(self):

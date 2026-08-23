@@ -41,12 +41,27 @@ class TestGreet(unittest.TestCase):
     def test_greet_accepts_username_keyword(self):
         self.assertEqual(greet(username="captain"), "hello captain")
 
+    def test_greet_spanish(self):
+        self.assertEqual(greet("captain", "es"), "hola captain")
+
+    def test_greet_missing_language_fallback_to_english(self):
+        self.assertEqual(greet("captain", "en"), "hello captain")
+
+    def test_greet_unknown_language_fallback_to_english(self):
+        self.assertEqual(greet("captain", "de"), "hello captain")
+
 
 class TestGreetAll(unittest.TestCase):
     def test_greet_all_returns_greetings_for_each_name(self):
         self.assertEqual(
             greet_all(["captain", "crew"]),
             ["hello captain", "hello crew"],
+        )
+
+    def test_greet_all_spanish(self):
+        self.assertEqual(
+            greet_all(["captain", "crew"], "es"),
+            ["hola captain", "hola crew"],
         )
 
     def test_greet_all_empty_list(self):
