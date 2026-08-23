@@ -38,6 +38,9 @@ class TestGreet(unittest.TestCase):
     def test_greet_unchanged(self):
         self.assertEqual(greet("captain"), "hello captain")
 
+    def test_greet_accepts_username_keyword(self):
+        self.assertEqual(greet(username="captain"), "hello captain")
+
 
 if __name__ == "__main__":
     unittest.main()
