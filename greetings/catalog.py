@@ -5,6 +5,14 @@ _LANG_DIR = Path(__file__).resolve().parent.parent / "lang"
 _cache = {}
 
 
+def language_codes():
+    found = {"en"}
+    if _LANG_DIR.is_dir():
+        for path in _LANG_DIR.glob("*.json"):
+            found.add(path.stem)
+    return sorted(found)
+
+
 def phrase(kind, language, default):
     if language == "en":
         return default

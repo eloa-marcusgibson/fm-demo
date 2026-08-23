@@ -12,11 +12,14 @@ class TestFarewell(unittest.TestCase):
     def test_farewell_spanish(self):
         self.assertEqual(farewell("crew", "es"), "adios crew")
 
+    def test_farewell_german(self):
+        self.assertEqual(farewell("Ada", "de"), "tschüss Ada")
+
     def test_farewell_missing_language_fallback_to_english(self):
         self.assertEqual(farewell("crew", "en"), "goodbye crew")
 
     def test_farewell_unknown_language_fallback_to_english(self):
-        self.assertEqual(farewell("crew", "de"), "goodbye crew")
+        self.assertEqual(farewell("crew", "zz"), "goodbye crew")
 
 
 class TestMainSmoke(unittest.TestCase):
@@ -44,11 +47,14 @@ class TestGreet(unittest.TestCase):
     def test_greet_spanish(self):
         self.assertEqual(greet("captain", "es"), "hola captain")
 
+    def test_greet_german(self):
+        self.assertEqual(greet("Ada", "de"), "hallo Ada")
+
     def test_greet_missing_language_fallback_to_english(self):
         self.assertEqual(greet("captain", "en"), "hello captain")
 
     def test_greet_unknown_language_fallback_to_english(self):
-        self.assertEqual(greet("captain", "de"), "hello captain")
+        self.assertEqual(greet("captain", "zz"), "hello captain")
 
     def test_greet_rejects_int_username(self):
         with self.assertRaises(ValueError) as ctx:
