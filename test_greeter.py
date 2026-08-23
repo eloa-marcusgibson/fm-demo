@@ -50,6 +50,21 @@ class TestGreet(unittest.TestCase):
     def test_greet_unknown_language_fallback_to_english(self):
         self.assertEqual(greet("captain", "de"), "hello captain")
 
+    def test_greet_rejects_int_username(self):
+        with self.assertRaises(ValueError) as ctx:
+            greet(42)
+        self.assertIn("str", str(ctx.exception).lower())
+
+    def test_greet_rejects_none_username(self):
+        with self.assertRaises(ValueError) as ctx:
+            greet(None)
+        self.assertIn("str", str(ctx.exception).lower())
+
+    def test_greet_rejects_bytes_username(self):
+        with self.assertRaises(ValueError) as ctx:
+            greet(b"captain")
+        self.assertIn("str", str(ctx.exception).lower())
+
 
 class TestGreetAll(unittest.TestCase):
     def test_greet_all_returns_greetings_for_each_name(self):
