@@ -6,6 +6,7 @@ _DEFAULT_TEMPLATE = "goodbye"
 
 
 def farewell(name, language="en"):
+    """Return a farewell for name, using language when a translation exists."""
     template = _DEFAULT_TEMPLATE
     if language != "en":
         with _LANG_FILE.open(encoding="utf-8") as f:
