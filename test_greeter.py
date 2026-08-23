@@ -27,7 +27,9 @@ class TestMainSmoke(unittest.TestCase):
 
 class TestGreet(unittest.TestCase):
     def test_greet_unchanged(self):
-        self.assertEqual(greet("captain"), "hello captain")
+        from greetings import greet as greet_from_package
+
+        self.assertEqual(greet_from_package("captain"), "hello captain")
 
 
 if __name__ == "__main__":
