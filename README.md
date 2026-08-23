@@ -14,8 +14,12 @@ print(greet("Alice"))
 ```
 
 `farewell(name, language="en")` returns a farewell string. Non-English
-languages are loaded from `greetings_lang.json` at call time; English and
-unknown codes fall back to `goodbye`:
+languages are loaded from `greetings_lang.json` once and cached in memory;
+English and unknown codes fall back to `goodbye`:
+
+When `greetings_lang.json` grows beyond roughly ten language entries, split
+it into one file per locale under `lang/` (for example `lang/es.json`,
+`lang/fr.json`) instead of expanding the monolith file.
 
 ```python
 from greetings import farewell
