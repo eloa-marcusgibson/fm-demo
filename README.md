@@ -4,7 +4,7 @@ Scratch repo for the fm-port full-chain test.
 
 ## Usage
 
-`greet(name)` returns a greeting string:
+`greet(username)` returns a greeting string:
 
 ```python
 from greetings import greet
