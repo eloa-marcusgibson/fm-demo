@@ -7,7 +7,7 @@ Scratch repo for the fm-port full-chain test.
 `greet(name)` returns a greeting string:
 
 ```python
-from greeter import greet
+from greetings import greet
 
 print(greet("Alice"))
 # hello Alice
@@ -16,7 +16,7 @@ print(greet("Alice"))
 `farewell(name)` returns a farewell string:
 
 ```python
-from greeter import farewell
+from greetings import farewell
 
 print(farewell("Alice"))
 # goodbye Alice
@@ -24,10 +24,10 @@ print(farewell("Alice"))
 
 ### Smoke block
 
-Run the module as a script to print the built-in smoke output:
+Run the package as a module to print the built-in smoke output:
 
 ```bash
-python greeter.py
+python -m greetings
 ```
 
 Expected output:
