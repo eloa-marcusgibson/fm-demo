@@ -1,4 +1,5 @@
 import argparse
+import json
 import sys
 
 from .farewell import farewell
@@ -9,12 +10,13 @@ from .greet_all import greet_all
 def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
-    if not argv:
+    if not argv or argv == ["--json"]:
         print(greet("captain"))
         print(farewell("crew"))
         return 0
 
     parser = argparse.ArgumentParser(prog="greetings")
+    parser.add_argument("--json", action="store_true")
     sub = parser.add_subparsers(dest="command")
     greet_parser = sub.add_parser("greet")
     greet_parser.add_argument("username")
@@ -28,23 +30,34 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.command == "greet":
         if args.lang is None:
-            print(greet(args.username))
+            line = greet(args.username)
         else:
-            print(greet(args.username, language=args.lang))
+            line = greet(args.username, language=args.lang)
+        if args.json:
+            print(json.dumps({"message": line}))
+        else:
+            print(line)
         return 0
     if args.command == "farewell":
         if args.lang is None:
-            print(farewell(args.name))
+            line = farewell(args.name)
         else:
-            print(farewell(args.name, language=args.lang))
+            line = farewell(args.name, language=args.lang)
+        if args.json:
+            print(json.dumps({"message": line}))
+        else:
+            print(line)
         return 0
     if args.command == "greet-all":
         if args.lang is None:
             lines = greet_all(args.names)
         else:
             lines = greet_all(args.names, language=args.lang)
-        for line in lines:
-            print(line)
+        if args.json:
+            print(json.dumps(lines))
+        else:
+            for line in lines:
+                print(line)
         return 0
     return 1
 
