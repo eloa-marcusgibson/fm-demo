@@ -7,7 +7,9 @@ from greeter import farewell, greet
 
 class TestFarewell(unittest.TestCase):
     def test_farewell_returns_goodbye_plus_name(self):
-        self.assertEqual(farewell("crew"), "goodbye crew")
+        from greetings import farewell as farewell_from_package
+
+        self.assertEqual(farewell_from_package("crew"), "goodbye crew")
 
 
 class TestMainSmoke(unittest.TestCase):
