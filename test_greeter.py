@@ -15,7 +15,7 @@ class TestFarewell(unittest.TestCase):
 class TestMainSmoke(unittest.TestCase):
     def test_greeter_script_prints_greet_and_farewell(self):
         result = subprocess.run(
-            [sys.executable, "greeter.py"],
+            [sys.executable, "-m", "greetings"],
             capture_output=True,
             text=True,
             check=False,
