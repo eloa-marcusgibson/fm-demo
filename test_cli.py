@@ -1,3 +1,4 @@
+import json
 import subprocess
 import sys
 import unittest
@@ -27,6 +28,13 @@ class TestGreetCommand(unittest.TestCase):
         result = run_cli("greet")
         self.assertNotEqual(result.returncode, 0)
 
+    def test_greet_json_prints_object(self):
+        result = run_cli("--json", "greet", "Alice")
+        self.assertEqual(result.returncode, 0)
+        payload = json.loads(result.stdout)
+        self.assertIsInstance(payload, dict)
+        self.assertEqual(payload, {"message": "hello Alice"})
+
 
 class TestFarewellCommand(unittest.TestCase):
     def test_farewell_prints_goodbye_name(self):
@@ -42,6 +50,13 @@ class TestFarewellCommand(unittest.TestCase):
     def test_farewell_missing_name_exits_nonzero(self):
         result = run_cli("farewell")
         self.assertNotEqual(result.returncode, 0)
+
+    def test_farewell_json_prints_object(self):
+        result = run_cli("--json", "farewell", "crew")
+        self.assertEqual(result.returncode, 0)
+        payload = json.loads(result.stdout)
+        self.assertIsInstance(payload, dict)
+        self.assertEqual(payload, {"message": "goodbye crew"})
 
 
 class TestGreetAllCommand(unittest.TestCase):
@@ -65,6 +80,13 @@ class TestGreetAllCommand(unittest.TestCase):
         result = run_cli("greet-all")
         self.assertNotEqual(result.returncode, 0)
 
+    def test_greet_all_json_prints_array_of_strings(self):
+        result = run_cli("--json", "greet-all", "captain", "crew")
+        self.assertEqual(result.returncode, 0)
+        payload = json.loads(result.stdout)
+        self.assertIsInstance(payload, list)
+        self.assertEqual(payload, ["hello captain", "hello crew"])
+
 
 class TestUnknownAndSmoke(unittest.TestCase):
     def test_unknown_subcommand_exits_nonzero(self):
@@ -73,6 +95,14 @@ class TestUnknownAndSmoke(unittest.TestCase):
 
     def test_no_args_prints_smoke_block(self):
         result = run_cli()
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(
+            result.stdout.strip().splitlines(),
+            ["hello captain", "goodbye crew"],
+        )
+
+    def test_json_without_command_prints_smoke_block(self):
+        result = run_cli("--json")
         self.assertEqual(result.returncode, 0)
         self.assertEqual(
             result.stdout.strip().splitlines(),
