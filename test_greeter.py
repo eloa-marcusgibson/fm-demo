@@ -9,6 +9,15 @@ class TestFarewell(unittest.TestCase):
     def test_farewell_returns_goodbye_plus_name(self):
         self.assertEqual(farewell("crew"), "goodbye crew")
 
+    def test_farewell_spanish(self):
+        self.assertEqual(farewell("crew", "es"), "adios crew")
+
+    def test_farewell_missing_language_fallback_to_english(self):
+        self.assertEqual(farewell("crew", "en"), "goodbye crew")
+
+    def test_farewell_unknown_language_fallback_to_english(self):
+        self.assertEqual(farewell("crew", "de"), "goodbye crew")
+
 
 class TestMainSmoke(unittest.TestCase):
     def test_greetings_module_prints_greet_and_farewell(self):
