@@ -1,4 +1,4 @@
-from .catalog import phrase
+from .catalog import phrase, render
 
 _DEFAULT_TEMPLATE = "goodbye"
 
@@ -6,5 +6,5 @@ _DEFAULT_TEMPLATE = "goodbye"
 def farewell(name, language="en"):
     """Return a farewell for name, using language when a translation exists."""
     template = phrase("farewell", language, _DEFAULT_TEMPLATE)
-    return f"{template} {name}"
+    return render(template, name, language)
 

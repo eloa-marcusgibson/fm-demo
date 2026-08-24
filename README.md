@@ -16,7 +16,7 @@ from greetings import greet
 print(greet("Alice"))
 # hello Alice
 print(greet("Alice", "es"))
-# hola Alice
+# Hola, Alice!
 ```
 
 `farewell(name, language="en")` uses the same catalog and fallback:
@@ -27,7 +27,7 @@ from greetings import farewell
 print(farewell("Alice"))
 # goodbye Alice
 print(farewell("Alice", "es"))
-# adios Alice
+# Adiós, Alice, hasta luego.
 ```
 
 `greet_all(names, language="en")` greets each name in the same language.

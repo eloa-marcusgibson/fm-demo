@@ -1,4 +1,4 @@
-from .catalog import phrase
+from .catalog import phrase, render
 
 _DEFAULT_TEMPLATE = "hello"
 
@@ -8,5 +8,5 @@ def greet(username, language="en"):
     if not isinstance(username, str):
         raise ValueError("username must be a str")
     template = phrase("greet", language, _DEFAULT_TEMPLATE)
-    return f"{template} {username}"
+    return render(template, username, language)
 
