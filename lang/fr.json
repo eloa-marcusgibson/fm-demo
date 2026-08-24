@@ -1,1 +1,1 @@
-{"greet": "Bonjour {name} !", "farewell": "Au revoir, {name} !"}
+{"greet": {"one": "Bonjour {name} !", "other": "Bonjour à tous !"}, "farewell": "Au revoir, {name} !"}

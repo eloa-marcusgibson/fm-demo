@@ -25,7 +25,10 @@ class TestFarewell(unittest.TestCase):
         self.assertEqual(farewell("crew"), "goodbye crew")
 
     def test_farewell_spanish(self):
-        self.assertEqual(farewell("crew", "es"), "Adiós, crew, hasta luego.")
+        self.assertEqual(farewell("crew", "es"), "Adiós a todos. crew")
+
+    def test_farewell_spanish_count_one(self):
+        self.assertEqual(farewell("crew", "es", count=1), "Adiós, crew.")
 
     def test_farewell_german(self):
         self.assertEqual(farewell("Ada", "de"), "tschüss Ada")
@@ -65,6 +68,14 @@ class TestFarewell(unittest.TestCase):
                 farewell("Ada", "fp")
         self.assertIn("fp", str(ctx.exception))
 
+    def test_farewell_plural_count_one_uses_one_entry(self):
+        with locale_file("q1", {"farewell": {"one": "Adiós, {name}.", "other": "Adiós a todos."}}):
+            self.assertEqual(farewell("Ada", "q1", count=1), "Adiós, Ada.")
+
+    def test_farewell_plural_count_five_uses_other_entry(self):
+        with locale_file("q2", {"farewell": {"one": "Adiós, {name}.", "other": "Adiós a todos."}}):
+            self.assertEqual(farewell("Ada", "q2", count=5), "Adiós a todos. Ada")
+
 
 class TestMainSmoke(unittest.TestCase):
     def test_greetings_module_prints_greet_and_farewell(self):
@@ -85,6 +96,10 @@ class TestGreet(unittest.TestCase):
     def test_greet_unchanged(self):
         self.assertEqual(greet("captain"), "hello captain")
 
+    def test_greet_english_count_does_not_change_append(self):
+        self.assertEqual(greet("captain", count=1), "hello captain")
+        self.assertEqual(greet("captain", count=5), "hello captain")
+
     def test_greet_accepts_username_keyword(self):
         self.assertEqual(greet(username="captain"), "hello captain")
 
@@ -95,13 +110,19 @@ class TestGreet(unittest.TestCase):
         self.assertEqual(greet("Ada", "de"), "hallo Ada")
 
     def test_greet_french(self):
-        self.assertEqual(greet("captain", "fr"), "Bonjour captain !")
+        self.assertEqual(greet("captain", "fr"), "Bonjour à tous ! captain")
+
+    def test_greet_french_count_one(self):
+        self.assertEqual(greet("captain", "fr", count=1), "Bonjour captain !")
 
     def test_greet_missing_language_fallback_to_english(self):
         self.assertEqual(greet("captain", "en"), "hello captain")
 
     def test_greet_unknown_language_fallback_to_english(self):
         self.assertEqual(greet("captain", "zz"), "hello captain")
+
+    def test_greet_unknown_language_count_still_falls_back(self):
+        self.assertEqual(greet("captain", "zz", count=1), "hello captain")
 
     def test_greet_without_placeholder_appends_name(self):
         with locale_file("ga", {"greet": "ciao"}):
@@ -144,6 +165,56 @@ class TestGreet(unittest.TestCase):
             greet(b"captain")
         self.assertIn("str", str(ctx.exception).lower())
 
+    def test_greet_plural_count_one_uses_one_entry(self):
+        with locale_file("p1", {"greet": {"one": "Hola {name}!", "other": "Hola a todos, {name}s!"}}):
+            self.assertEqual(greet("Ada", "p1", count=1), "Hola Ada!")
+
+    def test_greet_plural_count_five_uses_other_entry(self):
+        with locale_file("p2", {"greet": {"one": "Hola {name}!", "other": "Hola a todos, {name}s!"}}):
+            self.assertEqual(greet("Ada", "p2", count=5), "Hola a todos, Adas!")
+
+    def test_greet_plural_count_none_uses_other_entry(self):
+        with locale_file("p3", {"greet": {"one": "Hola {name}!", "other": "Hola a todos, {name}s!"}}):
+            self.assertEqual(greet("Ada", "p3"), "Hola a todos, Adas!")
+
+    def test_greet_string_count_none_uses_plain_string(self):
+        with locale_file("p4", {"greet": "ciao {name}"}):
+            self.assertEqual(greet("Ada", "p4"), "ciao Ada")
+
+    def test_greet_plural_missing_one_falls_to_other(self):
+        with locale_file("p5", {"greet": {"other": "Hola a todos, {name}s!"}}):
+            self.assertEqual(greet("Ada", "p5", count=1), "Hola a todos, Adas!")
+
+    def test_greet_plain_string_used_when_other_absent(self):
+        with locale_file("p6", {"greet": "ciao {name}"}):
+            self.assertEqual(greet("Ada", "p6", count=5), "ciao Ada")
+
+    def test_greet_plural_neither_one_nor_other_raises_naming_locale(self):
+        with locale_file("p7", {"greet": {"one": "Hola {name}!"}}):
+            with self.assertRaises(ValueError) as ctx:
+                greet("Ada", "p7")
+        self.assertIn("p7", str(ctx.exception))
+
+    def test_greet_non_int_count_raises_value_error(self):
+        with self.assertRaises(ValueError):
+            greet("Ada", count=1.5)
+
+    def test_greet_plural_entry_renders_literal_braces(self):
+        with locale_file("p8", {"greet": {"one": "hello {{name}} -> {name}", "other": "hi"}}):
+            self.assertEqual(greet("Ada", "p8", count=1), "hello {name} -> Ada")
+
+    def test_greet_plural_unknown_placeholder_raises_naming_locale(self):
+        with locale_file("p9", {"greet": {"one": "age {age}", "other": "hi {name}"}}):
+            with self.assertRaises(ValueError) as ctx:
+                greet("Ada", "p9", count=1)
+        self.assertIn("p9", str(ctx.exception))
+
+    def test_greet_plural_invalid_unused_entry_still_raises_naming_locale(self):
+        with locale_file("p0", {"greet": {"one": "age {age}", "other": "hi {name}"}}):
+            with self.assertRaises(ValueError) as ctx:
+                greet("Ada", "p0", count=5)
+        self.assertIn("p0", str(ctx.exception))
+
 
 class TestGreetAll(unittest.TestCase):
     def test_greet_all_returns_greetings_for_each_name(self):
@@ -175,6 +246,20 @@ class TestGreetAll(unittest.TestCase):
         with self.assertRaises(ValueError) as ctx:
             greet_all(["captain", b"crew"])
         self.assertIn("str", str(ctx.exception).lower())
+
+    def test_greet_all_plural_count_one_uses_one_entry(self):
+        with locale_file("r1", {"greet": {"one": "Hola {name}!", "other": "Hola a todos, {name}s!"}}):
+            self.assertEqual(
+                greet_all(["Ada", "Bo"], "r1", count=1),
+                ["Hola Ada!", "Hola Bo!"],
+            )
+
+    def test_greet_all_plural_count_five_uses_other_entry(self):
+        with locale_file("r2", {"greet": {"one": "Hola {name}!", "other": "Hola a todos, {name}s!"}}):
+            self.assertEqual(
+                greet_all(["Ada"], "r2", count=5),
+                ["Hola a todos, Adas!"],
+            )
 
 if __name__ == "__main__":
     unittest.main()

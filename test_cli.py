@@ -46,7 +46,7 @@ class TestGreetCommand(unittest.TestCase):
     def test_greet_lang_fr_prints_translated_line(self):
         result = run_cli("greet", "Alice", "--lang", "fr")
         self.assertEqual(result.returncode, 0)
-        self.assertEqual(result.stdout.strip().splitlines(), ["Bonjour Alice !"])
+        self.assertEqual(result.stdout.strip().splitlines(), ["Bonjour à tous ! Alice"])
 
     def test_greet_lang_renders_literal_braces(self):
         with locale_file("gc", {"greet": "hello {{name}} -> {name}"}):
@@ -80,6 +80,24 @@ class TestGreetCommand(unittest.TestCase):
         self.assertIsInstance(payload, dict)
         self.assertEqual(payload, {"message": "hello Alice"})
 
+    def test_greet_count_one_uses_one_entry(self):
+        with locale_file("c1", {"greet": {"one": "Hola {name}!", "other": "Hola a todos, {name}s!"}}):
+            result = run_cli("greet", "Ada", "--lang", "c1", "--count", "1")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip().splitlines(), ["Hola Ada!"])
+
+    def test_greet_count_seven_uses_other_entry(self):
+        with locale_file("c2", {"greet": {"one": "Hola {name}!", "other": "Hola a todos, {name}s!"}}):
+            result = run_cli("greet", "Ada", "--lang", "c2", "--count", "7")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip().splitlines(), ["Hola a todos, Adas!"])
+
+    def test_greet_json_with_count_keeps_message_shape(self):
+        result = run_cli("--json", "greet", "Alice", "--count", "1")
+        self.assertEqual(result.returncode, 0)
+        payload = json.loads(result.stdout)
+        self.assertEqual(payload, {"message": "hello Alice"})
+
 
 class TestFarewellCommand(unittest.TestCase):
     def test_farewell_prints_goodbye_name(self):
@@ -92,7 +110,7 @@ class TestFarewellCommand(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertEqual(
             result.stdout.strip().splitlines(),
-            ["Adiós, crew, hasta luego."],
+            ["Adiós a todos. crew"],
         )
 
     def test_farewell_lang_de_prints_translated_line(self):
@@ -134,6 +152,18 @@ class TestFarewellCommand(unittest.TestCase):
         self.assertIsInstance(payload, dict)
         self.assertEqual(payload, {"message": "goodbye crew"})
 
+    def test_farewell_count_one_uses_one_entry(self):
+        with locale_file("c3", {"farewell": {"one": "Adiós, {name}.", "other": "Adiós a todos."}}):
+            result = run_cli("farewell", "Ada", "--lang", "c3", "--count", "1")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip().splitlines(), ["Adiós, Ada."])
+
+    def test_farewell_count_seven_uses_other_entry(self):
+        with locale_file("c4", {"farewell": {"one": "Adiós, {name}.", "other": "Adiós a todos."}}):
+            result = run_cli("farewell", "Ada", "--lang", "c4", "--count", "7")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip().splitlines(), ["Adiós a todos. Ada"])
+
 
 class TestGreetAllCommand(unittest.TestCase):
     def test_greet_all_prints_one_line_per_name(self):
@@ -162,6 +192,18 @@ class TestGreetAllCommand(unittest.TestCase):
         payload = json.loads(result.stdout)
         self.assertIsInstance(payload, list)
         self.assertEqual(payload, ["hello captain", "hello crew"])
+
+    def test_greet_all_count_one_uses_one_entry(self):
+        with locale_file("c5", {"greet": {"one": "Hola {name}!", "other": "Hola a todos, {name}s!"}}):
+            result = run_cli("greet-all", "Ada", "Bo", "--lang", "c5", "--count", "1")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip().splitlines(), ["Hola Ada!", "Hola Bo!"])
+
+    def test_greet_all_count_seven_uses_other_entry(self):
+        with locale_file("c6", {"greet": {"one": "Hola {name}!", "other": "Hola a todos, {name}s!"}}):
+            result = run_cli("greet-all", "Ada", "--lang", "c6", "--count", "7")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip().splitlines(), ["Hola a todos, Adas!"])
 
 
 class TestLangsCommand(unittest.TestCase):

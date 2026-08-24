@@ -22,29 +22,36 @@ def main(argv=None):
     greet_parser = sub.add_parser("greet")
     greet_parser.add_argument("username")
     greet_parser.add_argument("--lang")
+    greet_parser.add_argument("--count", type=int)
     farewell_parser = sub.add_parser("farewell")
     farewell_parser.add_argument("name")
     farewell_parser.add_argument("--lang")
+    farewell_parser.add_argument("--count", type=int)
     greet_all_parser = sub.add_parser("greet-all")
     greet_all_parser.add_argument("names", nargs="+")
     greet_all_parser.add_argument("--lang")
+    greet_all_parser.add_argument("--count", type=int)
     sub.add_parser("langs")
     args = parser.parse_args(argv)
     if args.command == "greet":
-        if args.lang is None:
-            line = greet(args.username)
-        else:
-            line = greet(args.username, language=args.lang)
+        kwargs = {}
+        if args.lang is not None:
+            kwargs["language"] = args.lang
+        if args.count is not None:
+            kwargs["count"] = args.count
+        line = greet(args.username, **kwargs)
         if args.json:
             print(json.dumps({"message": line}))
         else:
             print(line)
         return 0
     if args.command == "farewell":
-        if args.lang is None:
-            line = farewell(args.name)
-        else:
-            line = farewell(args.name, language=args.lang)
+        kwargs = {}
+        if args.lang is not None:
+            kwargs["language"] = args.lang
+        if args.count is not None:
+            kwargs["count"] = args.count
+        line = farewell(args.name, **kwargs)
         if args.json:
             print(json.dumps({"message": line}))
         else:
@@ -55,10 +62,12 @@ def main(argv=None):
             print(code)
         return 0
     if args.command == "greet-all":
-        if args.lang is None:
-            lines = greet_all(args.names)
-        else:
-            lines = greet_all(args.names, language=args.lang)
+        kwargs = {}
+        if args.lang is not None:
+            kwargs["language"] = args.lang
+        if args.count is not None:
+            kwargs["count"] = args.count
+        lines = greet_all(args.names, **kwargs)
         if args.json:
             print(json.dumps(lines))
         else:

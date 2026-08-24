@@ -1,12 +1,14 @@
-from .catalog import phrase, render
+from .catalog import phrase, render, select_template
 
 _DEFAULT_TEMPLATE = "hello"
 
 
-def greet(username, language="en"):
+def greet(username, language="en", count=None):
     """Return a greeting for username, using language when a translation exists."""
     if not isinstance(username, str):
         raise ValueError("username must be a str")
-    template = phrase("greet", language, _DEFAULT_TEMPLATE)
+    template = select_template(
+        phrase("greet", language, _DEFAULT_TEMPLATE), count, language
+    )
     return render(template, username, language)
 
