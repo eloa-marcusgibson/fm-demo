@@ -1,1 +1,1 @@
-{"greet": "Hola, {name}!", "farewell": "Adiós, {name}, hasta luego."}
+{"greet": "Hola, {name}!", "farewell": {"one": "Adiós, {name}.", "other": "Adiós a todos."}}
