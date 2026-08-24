@@ -8,6 +8,30 @@ from .greet import greet
 from .greet_all import greet_all
 
 
+def _optional_kwargs(args):
+    kwargs = {}
+    if args.lang is not None:
+        kwargs["language"] = args.lang
+    if args.count is not None:
+        kwargs["count"] = args.count
+    return kwargs
+
+
+def _print_line(line, as_json):
+    if as_json:
+        print(json.dumps({"message": line}))
+    else:
+        print(line)
+
+
+def _print_lines(lines, as_json):
+    if as_json:
+        print(json.dumps(lines))
+    else:
+        for line in lines:
+            print(line)
+
+
 def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
@@ -34,45 +58,20 @@ def main(argv=None):
     sub.add_parser("langs")
     args = parser.parse_args(argv)
     if args.command == "greet":
-        kwargs = {}
-        if args.lang is not None:
-            kwargs["language"] = args.lang
-        if args.count is not None:
-            kwargs["count"] = args.count
-        line = greet(args.username, **kwargs)
-        if args.json:
-            print(json.dumps({"message": line}))
-        else:
-            print(line)
+        line = greet(args.username, **_optional_kwargs(args))
+        _print_line(line, args.json)
         return 0
     if args.command == "farewell":
-        kwargs = {}
-        if args.lang is not None:
-            kwargs["language"] = args.lang
-        if args.count is not None:
-            kwargs["count"] = args.count
-        line = farewell(args.name, **kwargs)
-        if args.json:
-            print(json.dumps({"message": line}))
-        else:
-            print(line)
+        line = farewell(args.name, **_optional_kwargs(args))
+        _print_line(line, args.json)
         return 0
     if args.command == "langs":
         for code in language_codes():
             print(code)
         return 0
     if args.command == "greet-all":
-        kwargs = {}
-        if args.lang is not None:
-            kwargs["language"] = args.lang
-        if args.count is not None:
-            kwargs["count"] = args.count
-        lines = greet_all(args.names, **kwargs)
-        if args.json:
-            print(json.dumps(lines))
-        else:
-            for line in lines:
-                print(line)
+        lines = greet_all(args.names, **_optional_kwargs(args))
+        _print_lines(lines, args.json)
         return 0
     return 1
 
