@@ -1,8 +1,10 @@
 import json
 from pathlib import Path
+from string import Formatter
 
 _LANG_DIR = Path(__file__).resolve().parent.parent / "lang"
 _cache = {}
+_formatter = Formatter()
 
 
 def language_codes():
@@ -27,3 +29,26 @@ def phrase(kind, language, default):
     if not data:
         return default
     return data.get(kind, default)
+
+
+def render(template, name, language):
+    try:
+        parsed = list(_formatter.parse(template))
+    except ValueError:
+        raise ValueError(
+            f"invalid template for locale {language}: unbalanced braces"
+        ) from None
+
+    fields = []
+    for _literal, field_name, format_spec, conversion in parsed:
+        if field_name is None:
+            continue
+        if field_name != "name" or format_spec or conversion:
+            raise ValueError(
+                f"invalid template for locale {language}: unknown placeholder"
+            )
+        fields.append(field_name)
+
+    if "name" in fields:
+        return template.format(name=name)
+    return f"{template} {name}"
